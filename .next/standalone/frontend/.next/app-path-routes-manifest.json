@@ -1,0 +1,21 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/admin/page": "/admin",
+  "/api/region/route": "/api/region",
+  "/api/search/route": "/api/search",
+  "/atacado/page": "/atacado",
+  "/bag/page": "/bag",
+  "/checkout/page": "/checkout",
+  "/contato/page": "/contato",
+  "/importador/page": "/importador",
+  "/importadores/page": "/importadores",
+  "/login/page": "/login",
+  "/lojistas/page": "/lojistas",
+  "/order/[id]/page": "/order/[id]",
+  "/page": "/",
+  "/produtos/[slug]/page": "/produtos/[slug]",
+  "/simulador/page": "/simulador",
+  "/sobre/page": "/sobre",
+  "/success/page": "/success"
+}

@@ -1,39 +1,80 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
-import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Navbar } from "@/components/Navbar";
-import { useCart } from "@/components/CartContext";
-import { getMessage } from "@/lib/i18n";
-import { useIntlStore } from "@/components/IntlStoreProvider";
 
-export default function SuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
-  const { clearCart } = useCart();
-  const { locale } = useIntlStore();
-  const t = getMessage(locale);
-  const orderId = searchParams.get("order") ?? "";
 
-  useEffect(() => {
-    clearCart();
-  }, [clearCart]);
+  const sessionId = searchParams.get("session_id");
+  const status = searchParams.get("status");
 
   return (
-    <main className="page-shell">
-      <Navbar />
-      <section className="content-section centered-panel">
-        <div className="summary-card success-panel">
-          <span className="section-eyebrow">{t.orderConfirmed}</span>
-          <h1>{t.orderConfirmed}</h1>
-          <p>Your premium order has been created successfully.</p>
-          {orderId ? <p className="muted">Order ID: {orderId}</p> : null}
-          <div className="button-row">
-            <Link className="primary-button button-link" href={orderId ? `/order/${orderId}` : "/"}>Track order</Link>
-            <Link className="secondary-button button-link" href="/">{t.continueShopping}</Link>
+    <main className="min-h-screen bg-black px-6 py-16 text-white">
+      <div className="mx-auto max-w-3xl">
+        <h1
+          className="mb-4 text-3xl font-light tracking-[0.2em]"
+          style={{ fontFamily: "serif" }}
+        >
+          PAGAMENTO CONFIRMADO
+        </h1>
+
+        <p className="mb-8 text-white/75">
+          Seu pedido foi recebido com sucesso.
+        </p>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <p className="mb-3 text-white/80">
+            Status: {status || "confirmado"}
+          </p>
+
+          <p className="mb-6 break-all text-white/80">
+            Session ID: {sessionId || "não informado"}
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/"
+              className="rounded-full border border-white/15 px-5 py-3 text-sm tracking-[0.18em] transition hover:bg-white hover:text-black"
+            >
+              VOLTAR PARA HOME
+            </Link>
+
+            <Link
+              href="/bag"
+              className="rounded-full border border-white/15 px-5 py-3 text-sm tracking-[0.18em] transition hover:bg-white hover:text-black"
+            >
+              VER SACOLA
+            </Link>
           </div>
         </div>
-      </section>
+      </div>
     </main>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-black px-6 py-16 text-white">
+          <div className="mx-auto max-w-3xl">
+            <h1
+              className="mb-4 text-3xl font-light tracking-[0.2em]"
+              style={{ fontFamily: "serif" }}
+            >
+              PAGAMENTO CONFIRMADO
+            </h1>
+
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <p className="text-white/70">Carregando informações do pedido...</p>
+            </div>
+          </div>
+        </main>
+      }
+    >
+      <SuccessContent />
+    </Suspense>
   );
 }
