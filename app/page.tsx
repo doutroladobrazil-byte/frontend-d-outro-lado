@@ -10,6 +10,7 @@ import {
   ShoppingBag,
   User,
 } from "lucide-react";
+import MenuDrawer from "@/components/MenuDrawer";
 
 type Slide = {
   title: string;
@@ -133,13 +134,12 @@ const homeSlides: Slide[] = [
   },
 ];
 
-function DualSlider({
-  title,
-  slides,
-}: {
+type SliderProps = {
   title: string;
   slides: Slide[];
-}) {
+};
+
+function DualSlider({ title, slides }: SliderProps) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -188,18 +188,17 @@ function DualSlider({
         </div>
       </div>
 
-      <Link
-        href={activeSlide.href}
-        className="group relative block overflow-hidden rounded-[28px] border border-white/10 bg-[#0d0d0d]"
-      >
-        <div className="relative min-h-[500px]">
+      <div className="relative block overflow-hidden rounded-[28px] border border-white/10 bg-[#0d0d0d]">
+        <div className="relative min-h-[520px]">
           {slides.map((slide, index) => (
             <div
               key={`${slide.title}-${index}`}
               className={`absolute inset-0 transition-all duration-700 ease-out ${
                 current === index
-                  ? "scale-100 opacity-100"
-                  : "pointer-events-none scale-[1.03] opacity-0"
+                  ? "translate-x-0 opacity-100"
+                  : index < current
+                    ? "-translate-x-8 opacity-0"
+                    : "translate-x-8 opacity-0"
               }`}
             >
               <div
@@ -207,11 +206,11 @@ function DualSlider({
                 style={{ backgroundImage: `url('${slide.image}')` }}
               />
               <div className="absolute inset-0 bg-black/45" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-black/40" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/35" />
             </div>
           ))}
 
-          <div className="relative z-10 flex min-h-[500px] items-end">
+          <div className="relative z-10 flex min-h-[520px] items-end">
             <div className="w-full p-6 sm:p-8 lg:p-10">
               <p className="mb-3 text-[11px] uppercase tracking-[0.32em] text-[#d6c2a1]">
                 {activeSlide.subtitle}
@@ -224,147 +223,175 @@ function DualSlider({
                 {activeSlide.title}
               </h2>
 
-              <p className="mt-4 max-w-xl text-sm leading-7 text-white/80 sm:text-base">
+              <Link
+                href={activeSlide.href}
+                className="mt-4 block max-w-xl text-sm leading-7 text-white/80 transition hover:text-white sm:text-base"
+              >
                 {activeSlide.description}
-              </p>
+              </Link>
 
-              <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-white/20 px-5 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition group-hover:bg-white group-hover:text-black">
+              <Link
+                href={activeSlide.href}
+                className="mt-6 inline-flex items-center gap-3 rounded-full border border-white/20 px-5 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition hover:bg-white hover:text-black"
+              >
                 Explorar
                 <span className="text-base">→</span>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
-      </Link>
-
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {slides.map((slide, index) => (
-          <button
-            key={`card-${slide.title}-${index}`}
-            type="button"
-            onClick={() => setCurrent(index)}
-            className={`overflow-hidden rounded-[22px] border text-left transition ${
-              current === index
-                ? "border-white/40 bg-white/8"
-                : "border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.05]"
-            }`}
-          >
-            <div
-              className="h-24 w-full bg-cover bg-center"
-              style={{ backgroundImage: `url('${slide.image}')` }}
-            />
-            <div className="p-3">
-              <p className="mb-1 text-[10px] uppercase tracking-[0.28em] text-[#cdb899]">
-                {slide.subtitle}
-              </p>
-              <p className="line-clamp-2 text-sm text-white/88">{slide.title}</p>
-            </div>
-          </button>
-        ))}
       </div>
     </section>
   );
 }
 
 export default function HomePage() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <main className="min-h-screen bg-black text-white">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/95 backdrop-blur">
-        <div className="flex h-[88px] items-center justify-between px-4 sm:px-6 lg:px-10">
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              aria-label="Abrir menu"
-              className="rounded-full border border-white/10 p-3 transition hover:border-white/30 hover:bg-white/5"
+      <section className="relative overflow-hidden border-b border-white/8">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_45%)]" />
+
+        <div className="relative mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 sm:pb-10 sm:pt-14 lg:px-10 lg:pb-12 lg:pt-16">
+          <div className="text-center">
+            <p className="mb-4 text-[10px] uppercase tracking-[0.5em] text-[#cdb899] sm:text-[11px]">
+              Brasil sofisticado para o mundo
+            </p>
+
+            <h1
+              className="mx-auto max-w-6xl text-4xl font-light leading-[0.88] text-white sm:text-6xl lg:text-[108px]"
+              style={{ fontFamily: "serif" }}
             >
-              <Menu size={22} />
-            </button>
+              D&apos;OUTRO LADO
+            </h1>
           </div>
 
-          <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <Link href="/">
-              <span
-                className="block text-[18px] tracking-[0.42em] text-white sm:text-[22px]"
-                style={{ fontFamily: "serif" }}
-              >
-                D&apos;OUTRO LADO
-              </span>
-            </Link>
-          </div>
+          <header className="mt-8 rounded-full border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-md sm:px-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen(true)}
+                  aria-label="Abrir menu"
+                  className="rounded-full border border-white/10 p-3 transition hover:border-white/30 hover:bg-white/5"
+                >
+                  <Menu size={20} />
+                </button>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            <button className="rounded-full border border-white/10 px-4 py-3 text-sm transition hover:border-white/30 hover:bg-white/5">
-              EN
-            </button>
+                <Link
+                  href="/"
+                  className="hidden rounded-full border border-white/10 px-4 py-3 text-[11px] uppercase tracking-[0.3em] text-white/75 transition hover:border-white/30 hover:bg-white/5 md:inline-flex"
+                >
+                  Home
+                </Link>
+              </div>
 
-            <button className="hidden rounded-full border border-white/10 px-6 py-3 text-sm transition hover:border-white/30 hover:bg-white/5 sm:block">
-              Europe
-            </button>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <button className="rounded-full border border-white/10 px-4 py-3 text-[11px] uppercase tracking-[0.22em] text-white/80 transition hover:border-white/30 hover:bg-white/5">
+                  EN
+                </button>
 
-            <button className="rounded-full border border-white/10 px-4 py-3 text-sm transition hover:border-white/30 hover:bg-white/5">
-              EUR
-            </button>
+                <button className="hidden rounded-full border border-white/10 px-5 py-3 text-[11px] uppercase tracking-[0.22em] text-white/80 transition hover:border-white/30 hover:bg-white/5 sm:inline-flex">
+                  Europe
+                </button>
 
-            <button
-              aria-label="Pesquisar"
-              className="rounded-full p-3 transition hover:bg-white/5"
-            >
-              <Search size={20} />
-            </button>
+                <button className="rounded-full border border-white/10 px-4 py-3 text-[11px] uppercase tracking-[0.22em] text-white/80 transition hover:border-white/30 hover:bg-white/5">
+                  EUR
+                </button>
 
-            <Link
-              href="/login"
-              aria-label="Login"
-              className="rounded-full p-3 transition hover:bg-white/5"
-            >
-              <User size={20} />
-            </Link>
+                <button
+                  aria-label="Pesquisar"
+                  className="rounded-full border border-transparent p-3 transition hover:border-white/20 hover:bg-white/5"
+                >
+                  <Search size={18} />
+                </button>
 
-            <Link
-              href="/bag"
-              aria-label="Sacola"
-              className="rounded-full p-3 transition hover:bg-white/5"
-            >
-              <ShoppingBag size={20} />
-            </Link>
-          </div>
-        </div>
-      </header>
+                <Link
+                  href="/login"
+                  aria-label="Login"
+                  className="rounded-full border border-transparent p-3 transition hover:border-white/20 hover:bg-white/5"
+                >
+                  <User size={18} />
+                </Link>
 
-      <section className="px-4 pb-12 pt-16 sm:px-6 sm:pt-20 lg:px-10 lg:pt-24">
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="mb-6 text-[12px] uppercase tracking-[0.38em] text-[#ccb691]">
-            Brasil sofisticado para o mundo
-          </p>
-
-          <h1
-            className="mx-auto max-w-6xl text-5xl font-light leading-[0.9] text-white sm:text-7xl lg:text-[112px]"
-            style={{ fontFamily: "serif" }}
-          >
-            D&apos;OUTRO LADO
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-3xl text-sm leading-7 text-white/72 sm:text-base">
-            Curadoria internacional de produtos brasileiros sofisticados, com
-            linguagem premium, estética refinada e experiência pensada para um
-            público exigente.
-          </p>
+                <Link
+                  href="/bag"
+                  aria-label="Sacola"
+                  className="rounded-full border border-transparent p-3 transition hover:border-white/20 hover:bg-white/5"
+                >
+                  <ShoppingBag size={18} />
+                </Link>
+              </div>
+            </div>
+          </header>
         </div>
       </section>
 
-      <section className="px-4 pb-12 sm:px-6 lg:px-10">
+      <section className="px-4 pb-12 pt-10 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
           <DualSlider
             title="Moda, vestuário e acessórios"
             slides={fashionSlides}
           />
-
           <DualSlider
             title="Cerâmica, decorações e enxoval"
             slides={homeSlides}
           />
         </div>
       </section>
+
+      <section className="px-4 pb-16 sm:px-6 lg:px-10">
+        <div className="overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.03]">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+            <div
+              className="min-h-[360px] bg-cover bg-center"
+              style={{
+                backgroundImage:
+                  "url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1400&q=80')",
+              }}
+            />
+            <div className="flex items-center">
+              <div className="p-8 sm:p-10 lg:p-14">
+                <p className="mb-3 text-[11px] uppercase tracking-[0.35em] text-[#cdb899]">
+                  Presentes personalizados
+                </p>
+
+                <h2
+                  className="text-3xl font-light leading-tight text-white sm:text-4xl lg:text-5xl"
+                  style={{ fontFamily: "serif" }}
+                >
+                  Kits elegantes criados para ocasiões especiais
+                </h2>
+
+                <p className="mt-5 max-w-xl text-sm leading-7 text-white/75 sm:text-base">
+                  Desenvolvemos composições exclusivas para presentes sofisticados,
+                  unindo estética refinada, curadoria brasileira e apresentação
+                  premium para surpreender com personalidade.
+                </p>
+
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <Link
+                    href="/contato"
+                    className="rounded-full border border-white/20 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition hover:bg-white hover:text-black"
+                  >
+                    Solicitar presente personalizado
+                  </Link>
+
+                  <Link
+                    href="/sobre"
+                    className="rounded-full border border-white/10 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white/80 transition hover:border-white/30 hover:bg-white/5 hover:text-white"
+                  >
+                    Saber mais
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <MenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
     </main>
   );
 }
