@@ -1,61 +1,49 @@
 "use client";
 
-import Link from "next/link";
-import { Navbar } from "@/components/Navbar";
-import { useCart } from "@/components/CartContext";
-import { getMessage } from "@/lib/i18n";
-import { useIntlStore } from "@/components/IntlStoreProvider";
-
-function formatMoney(value: number, currency: string, locale: string) {
-  const localeMap: Record<string, string> = { pt: "pt-BR", en: "en-US", fr: "fr-FR", de: "de-DE", it: "it-IT", es: "es-ES" };
-  return new Intl.NumberFormat(localeMap[locale] ?? "en-US", { style: "currency", currency }).format(value);
-}
+import { useCart } from "@/hooks/useCart";
 
 export default function BagPage() {
-  const { items, removeItem, clearCart, totalBRL } = useCart();
-  const { locale, currency } = useIntlStore();
-  const t = getMessage(locale);
-  const totalLocal = currency === "BRL" ? totalBRL : totalBRL * (currency === "EUR" ? 0.18 : currency === "USD" ? 0.2 : currency === "CHF" ? 0.16 : 0.15);
+  const { items, removeItem, total, subtotal, freight, tax, margin } =
+    useCart();
 
   return (
-    <main className="page-shell">
-      <Navbar />
-      <section className="content-section">
-        <div className="section-heading">
-          <div>
-            <span className="section-eyebrow">{t.summary}</span>
-            <h1>{t.bag}</h1>
-          </div>
-        </div>
+    <main className="min-h-screen bg-black text-white p-8">
+      <h1 className="text-3xl mb-8">SACOLA</h1>
 
-        <div className="bag-layout">
-          <div className="bag-items">
-            {items.length === 0 ? (
-              <div className="info-card">{t.emptyBag}</div>
-            ) : (
-              items.map((item) => (
-                <article key={item.id} className="bag-item-card">
-                  <img src={item.image} alt={item.name} className="bag-item-image" />
-                  <div>
-                    <h3>{item.name}</h3>
-                    <p>Quantity: {item.quantity}</p>
-                    <strong>{formatMoney(item.priceLocal ?? item.priceBRL, item.currency ?? currency, locale)}</strong>
-                  </div>
-                  <button className="secondary-button" onClick={() => removeItem(item.id)}>Remove</button>
-                </article>
-              ))
-            )}
-          </div>
+      {items.length === 0 && <p>Sua sacola está vazia</p>}
 
-          <aside className="summary-card">
-            <h2>{t.summary}</h2>
-            <p>Base total BRL: R$ {totalBRL.toFixed(2)}</p>
-            <p>Display total: {formatMoney(totalLocal, currency, locale)}</p>
-            <Link href="/checkout" className="primary-button button-link">{t.checkout}</Link>
-            <button className="secondary-button" onClick={clearCart}>Clear bag</button>
-          </aside>
-        </div>
-      </section>
+      <div className="space-y-4">
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="flex justify-between border-b border-white/10 pb-4"
+          >
+            <div>
+              <p>{item.name}</p>
+              <p>Qtd: {item.quantity}</p>
+            </div>
+
+            <div>
+              <p>R$ {item.price}</p>
+
+              <button onClick={() => removeItem(item.id)}>
+                Remover
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-10 space-y-2 text-sm">
+        <p>Subtotal: R$ {subtotal.toFixed(2)}</p>
+        <p>Frete: R$ {freight.toFixed(2)}</p>
+        <p>Impostos: R$ {tax.toFixed(2)}</p>
+        <p>Margem: R$ {margin.toFixed(2)}</p>
+
+        <p className="text-xl mt-4">
+          Total: R$ {total.toFixed(2)}
+        </p>
+      </div>
     </main>
   );
 }
