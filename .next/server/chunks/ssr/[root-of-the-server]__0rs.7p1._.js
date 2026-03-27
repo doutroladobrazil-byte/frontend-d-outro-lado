@@ -1,3 +1,0 @@
-module.exports=[93695,(a,b,c)=>{b.exports=a.x("next/dist/shared/lib/no-fallback-error.external.js",()=>require("next/dist/shared/lib/no-fallback-error.external.js"))},51281,a=>{"use strict";var b=a.i(7997),c=a.i(72750);a.s(["default",0,function(){return(0,b.jsxs)("main",{className:"page-shell",children:[(0,b.jsx)(c.Navbar,{}),(0,b.jsxs)("section",{className:"content-section static-copy",children:[(0,b.jsx)("span",{className:"section-eyebrow",children:"Contato"}),(0,b.jsx)("h1",{children:"Fale com a equipe"}),(0,b.jsx)("p",{children:"E-mail: contato@doutrolado.com"}),(0,b.jsx)("p",{children:"WhatsApp do projeto: +55 16 99197-7845"})]})]})}])},56400,a=>{a.n(a.i(51281))}];
-
-//# sourceMappingURL=%5Broot-of-the-server%5D__0rs.7p1._.js.map

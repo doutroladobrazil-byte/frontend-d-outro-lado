@@ -22,6 +22,7 @@ type CartContextValue = {
   subtotal: number;
   addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
   removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
 };
 
@@ -50,6 +51,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }
 
+  function updateQuantity(id: string, quantity: number) {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+      )
+    );
+  }
+
   function clearCart() {
     setItems([]);
   }
@@ -72,6 +81,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         subtotal,
         addItem,
         removeItem,
+        updateQuantity,
         clearCart,
       }}
     >
