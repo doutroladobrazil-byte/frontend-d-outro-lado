@@ -1,115 +1,189 @@
-
 "use client";
 
 import Link from "next/link";
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllCategories } from "@/data/categoryData";
 import { useCart } from "@/components/CartContext";
-import { localeLabels, type Locale } from "@/lib/i18n";
 import { useIntlStore } from "@/components/IntlStoreProvider";
-import { storeApi, type StoreProduct } from "@/lib/storeApi";
 
-const REGIONS = ["Europe", "France", "Italy", "Germany", "Switzerland", "United States", "Brazil"];
+const REGIONS = ["Europe", "France", "Italy", "Germany", "Switzerland"];
+
+function formatCategoryLabel(slug: string) {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [products, setProducts] = useState<StoreProduct[]>([]);
+
   const categories = getAllCategories();
-  const { totalItems } = useCart();
+  const { itemCount } = useCart();
   const { locale, setLocale, region, setRegion, currency } = useIntlStore();
 
   useEffect(() => {
-    storeApi
-      .listProducts(region)
-      .then((payload) => setProducts(payload.products))
-      .catch(() => setProducts([]));
-  }, [region]);
+    document.body.style.overflow = menuOpen || searchOpen ? "hidden" : "auto";
 
-  const suggestions = useMemo(() => {
-    if (!query.trim()) return products.slice(0, 5);
-    const normalized = query.toLowerCase();
-    return products.filter((product) => product.name.toLowerCase().includes(normalized)).slice(0, 5);
-  }, [products, query]);
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [menuOpen, searchOpen]);
 
   return (
-    <>
-      <header className="site-header">
-        <div className="nav-side nav-left">
-          <button className="icon-button" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
-            <Menu size={20} />
-          </button>
-        </div>
+    <header className="w-full border-b border-white/10 bg-black text-white">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          className="p-2 transition hover:opacity-70"
+          aria-label="Abrir menu"
+        >
+          <Menu size={20} />
+        </button>
 
-        <Link href="/" className="brand-mark">
+        <Link
+          href="/"
+          className="text-[18px] font-light tracking-[0.35em]"
+          style={{ fontFamily: "serif" }}
+        >
           D&apos;OUTRO LADO
         </Link>
 
-        <div className="nav-side nav-right">
-          <select className="nav-select" value={locale} onChange={(e) => setLocale(e.target.value as Locale)} aria-label="Language">
-            {Object.entries(localeLabels).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
-          <select className="nav-select region-select" value={region} onChange={(e) => setRegion(e.target.value)} aria-label="Region">
-            {REGIONS.map((item) => <option key={item} value={item}>{item}</option>)}
-          </select>
-          <span className="currency-pill">{currency}</span>
-          <button className="icon-button" aria-label="Search" onClick={() => setSearchOpen((v) => !v)}>
-            <Search size={18} />
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            className="p-2 transition hover:opacity-70"
+            aria-label="Abrir busca"
+          >
+            <Search size={20} />
           </button>
-          <Link href="/login" className="icon-button" aria-label="Sign in">
-            <User size={18} />
+
+          <Link
+            href="/login"
+            className="p-2 transition hover:opacity-70"
+            aria-label="Entrar"
+          >
+            <User size={20} />
           </Link>
-          <Link href="/bag" className="icon-button bag-button" aria-label="Bag">
-            <ShoppingBag size={18} />
-            {totalItems > 0 ? <span className="bag-badge">{totalItems}</span> : null}
+
+          <Link
+            href="/bag"
+            className="relative p-2 transition hover:opacity-70"
+            aria-label="Sacola"
+          >
+            <ShoppingBag size={20} />
+
+            {itemCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-medium text-black">
+                {itemCount}
+              </span>
+            )}
           </Link>
         </div>
-      </header>
+      </div>
 
-      {searchOpen ? (
-        <div className="search-panel">
-          <div className="search-shell">
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search bags, leather, ceramics..." className="search-input" />
-            <div className="search-suggestions">
-              {suggestions.map((product) => (
-                <Link key={product.id} href={`/produtos/${product.categorySlug}`} className="search-suggestion">
-                  <span>{product.name}</span>
-                  <small>{product.tag}</small>
-                </Link>
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 bg-black/95 p-6 text-white">
+          <div className="mb-8 flex items-center justify-between">
+            <h2 className="text-lg tracking-[0.2em]">MENU</h2>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Fechar menu"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <nav className="flex flex-col gap-6 text-lg">
+            {categories.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/produtos/${cat.slug}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {formatCategoryLabel(cat.slug)}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="mt-10">
+            <p className="mb-2 text-sm opacity-60">Região</p>
+            <div className="flex flex-wrap gap-2">
+              {REGIONS.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRegion(r)}
+                  className={`px-3 py-1 border transition ${
+                    region === r
+                      ? "border-white bg-white text-black"
+                      : "border-white/30 text-white"
+                  }`}
+                >
+                  {r}
+                </button>
               ))}
             </div>
           </div>
-        </div>
-      ) : null}
 
-      <aside className={`menu-drawer ${menuOpen ? "open" : ""}`}>
-        <div className="menu-drawer-header">
-          <span>Navigation</span>
-          <button className="icon-button" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
-            <X size={18} />
-          </button>
-        </div>
-        <nav className="menu-drawer-nav">
-          <Link href="/" onClick={() => setMenuOpen(false)}>Home</Link>
-          {categories.map((category) => (
-            <Link key={category.slug} href={`/produtos/${category.slug}`} onClick={() => setMenuOpen(false)}>{category.title}</Link>
-          ))}
-          <Link href="/checkout" onClick={() => setMenuOpen(false)}>Checkout</Link>
-          <Link href="/atacado" onClick={() => setMenuOpen(false)}>Atacado</Link>
-          <Link href="/importador" onClick={() => setMenuOpen(false)}>Importador</Link>
-          <Link href="/sobre" onClick={() => setMenuOpen(false)}>About</Link>
-          <Link href="/contato" onClick={() => setMenuOpen(false)}>Contact</Link>
-          <Link href="/admin" onClick={() => setMenuOpen(false)}>Admin</Link>
-          <Link href="/login" onClick={() => setMenuOpen(false)}>Login</Link>
-          <Link href="/bag" onClick={() => setMenuOpen(false)}>Bag</Link>
-        </nav>
-      </aside>
+          <div className="mt-6">
+            <p className="mb-2 text-sm opacity-60">Idioma</p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setLocale("pt")}
+                className={`px-3 py-1 border transition ${
+                  locale === "pt"
+                    ? "border-white bg-white text-black"
+                    : "border-white/30 text-white"
+                }`}
+              >
+                PT
+              </button>
 
-      {menuOpen ? <button className="drawer-overlay" aria-label="Close menu" onClick={() => setMenuOpen(false)} /> : null}
-    </>
+              <button
+                type="button"
+                onClick={() => setLocale("en")}
+                className={`px-3 py-1 border transition ${
+                  locale === "en"
+                    ? "border-white bg-white text-black"
+                    : "border-white/30 text-white"
+                }`}
+              >
+                EN
+              </button>
+            </div>
+          </div>
+
+          <p className="mt-10 text-xs opacity-40">Currency: {currency}</p>
+        </div>
+      )}
+
+      {searchOpen && (
+        <div className="fixed inset-0 z-50 bg-black/95 p-6 text-white">
+          <div className="mb-8 flex items-center justify-between">
+            <h2 className="text-lg tracking-[0.2em]">SEARCH</h2>
+            <button
+              type="button"
+              onClick={() => setSearchOpen(false)}
+              aria-label="Fechar busca"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <input
+            type="text"
+            placeholder="Buscar produtos..."
+            className="w-full border-b border-white/30 bg-transparent py-2 outline-none placeholder:text-white/40"
+          />
+        </div>
+      )}
+    </header>
   );
 }

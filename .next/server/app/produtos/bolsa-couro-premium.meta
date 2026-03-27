@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/produtos/layout,_N_T_/produtos/[slug]/layout,_N_T_/produtos/[slug]/page,_N_T_/produtos/bolsa-couro-premium"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/produtos/$d$slug/__PAGE__",
+    "/produtos/$d$slug",
+    "/produtos",
+    "/_index",
+    "/_head"
+  ]
+}

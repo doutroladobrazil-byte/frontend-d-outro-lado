@@ -5,21 +5,22 @@ import {
   useContext,
   useMemo,
   useState,
-  ReactNode,
+  type ReactNode,
 } from "react";
 
-type CartItem = {
+export type CartItem = {
   id: string;
   name: string;
   price: number;
   quantity: number;
+  image?: string;
 };
 
 type CartContextValue = {
   items: CartItem[];
   itemCount: number;
   subtotal: number;
-  addItem: (item: CartItem) => void;
+  addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
 };
@@ -29,19 +30,19 @@ const CartContext = createContext<CartContextValue | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  function addItem(item: CartItem) {
+  function addItem(item: Omit<CartItem, "quantity">, quantity = 1) {
     setItems((prev) => {
       const existing = prev.find((product) => product.id === item.id);
 
       if (existing) {
         return prev.map((product) =>
           product.id === item.id
-            ? { ...product, quantity: product.quantity + item.quantity }
+            ? { ...product, quantity: product.quantity + quantity }
             : product
         );
       }
 
-      return [...prev, item];
+      return [...prev, { ...item, quantity }];
     });
   }
 

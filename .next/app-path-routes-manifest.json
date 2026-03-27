@@ -15,6 +15,7 @@
   "/order/[id]/page": "/order/[id]",
   "/page": "/",
   "/produtos/[slug]/page": "/produtos/[slug]",
+  "/search/page": "/search",
   "/simulador/page": "/simulador",
   "/sobre/page": "/sobre",
   "/success/page": "/success"

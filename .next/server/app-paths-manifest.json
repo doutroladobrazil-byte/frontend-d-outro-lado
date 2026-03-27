@@ -15,6 +15,7 @@
   "/order/[id]/page": "app/order/[id]/page.js",
   "/page": "app/page.js",
   "/produtos/[slug]/page": "app/produtos/[slug]/page.js",
+  "/search/page": "app/search/page.js",
   "/simulador/page": "app/simulador/page.js",
   "/sobre/page": "app/sobre/page.js",
   "/success/page": "app/success/page.js"

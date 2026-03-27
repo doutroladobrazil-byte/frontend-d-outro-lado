@@ -125,6 +125,12 @@
       "namedRegex": "^/lojistas(?:/)?$"
     },
     {
+      "page": "/search",
+      "regex": "^/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/search(?:/)?$"
+    },
+    {
       "page": "/simulador",
       "regex": "^/simulador(?:/)?$",
       "routeKeys": {},
