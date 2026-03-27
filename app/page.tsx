@@ -1,397 +1,668 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Menu,
-  Search,
-  ShoppingBag,
-  User,
-} from "lucide-react";
-import MenuDrawer from "@/components/MenuDrawer";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
-type Slide = {
+type HeroSlide = {
+  id: number;
   title: string;
   subtitle: string;
   description: string;
-  image: string;
   href: string;
+  image: string;
+  eyebrow: string;
 };
 
-const fashionSlides: Slide[] = [
+type CategoryCard = {
+  id: number;
+  title: string;
+  description: string;
+  href: string;
+  image: string;
+};
+
+const heroSlides: HeroSlide[] = [
   {
-    title: "BOLSAS E ACESSÓRIOS",
-    subtitle: "Moda, vestuário e acessórios",
+    id: 1,
+    eyebrow: "Moda, estilo e acessórios",
+    title: "Curadoria sofisticada de peças brasileiras",
+    subtitle: "Couro, crochê, acessórios e design com presença premium.",
     description:
-      "Curadoria premium com bolsas de crochê, couro, carteiras, óculos e acessórios com estética elegante e internacional.",
-    image:
-      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1400&q=80",
+      "Uma seleção elegante de produtos brasileiros pensados para clientes que valorizam autenticidade, refinamento e estética atemporal.",
     href: "/produtos/moda-estilo-e-acessorios",
+    image:
+      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1600&q=80",
   },
   {
-    title: "COURO E PRESENÇA",
-    subtitle: "Textura, sofisticação e valor percebido",
+    id: 2,
+    eyebrow: "Casa e decoração",
+    title: "Peças que transformam o ambiente com discrição e elegância",
+    subtitle: "Cerâmica autoral, decoração refinada e visual minimalista.",
     description:
-      "Seleção refinada de peças com forte apelo visual e leitura premium para o mercado internacional.",
+      "Produtos para ambientes sofisticados, com materiais naturais, presença leve e leitura contemporânea.",
+    href: "/produtos/casa-e-decoracao",
+    image:
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80",
+  },
+];
+
+const categoryCards: CategoryCard[] = [
+  {
+    id: 1,
+    title: "Moda, Estilo e Acessórios",
+    description:
+      "Bolsas de crochê, bolsas de couro, óculos, carteiras, nécessaires e calçados com linguagem elegante e contemporânea.",
+    href: "/produtos/moda-estilo-e-acessorios",
     image:
       "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/moda-estilo-e-acessorios",
   },
   {
-    title: "SAPATOS E ESTILO",
-    subtitle: "Silhueta elegante e comercial",
+    id: 2,
+    title: "Casa e Decoração",
     description:
-      "Peças pensadas para transmitir elegância contemporânea e uma identidade brasileira sofisticada.",
+      "Cerâmica decorativa, pratos, xícaras, travessas, enxoval e objetos que valorizam a composição de ambientes sofisticados.",
+    href: "/produtos/casa-e-decoracao",
     image:
-      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/moda-estilo-e-acessorios",
-  },
-  {
-    title: "ÓCULOS E DETALHES",
-    subtitle: "Acessórios com assinatura visual",
-    description:
-      "Uma composição de acessórios desejáveis para clientes que buscam acabamento, neutralidade e presença.",
-    image:
-      "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/moda-estilo-e-acessorios",
-  },
-  {
-    title: "CROCHÊ E IDENTIDADE",
-    subtitle: "Artesanal com leitura premium",
-    description:
-      "O artesanal brasileiro reinterpretado em linguagem sofisticada para exportação.",
-    image:
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/moda-estilo-e-acessorios",
-  },
-  {
-    title: "CURADORIA DE MODA",
-    subtitle: "Versatilidade e desejo",
-    description:
-      "Moda e acessórios com força editorial para elevar a percepção da marca e do catálogo.",
-    image:
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/moda-estilo-e-acessorios",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1400&q=80",
   },
 ];
 
-const homeSlides: Slide[] = [
+const featuredHighlights = [
   {
-    title: "CERÂMICA AUTORAL",
-    subtitle: "Cerâmica, decorações e enxoval",
-    description:
-      "Peças para casa com visual minimalista, sofisticado e forte apelo decorativo.",
-    image:
-      "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/casa-e-decoracao",
+    title: "Experiência premium",
+    text: "Layout elegante, leitura limpa e navegação refinada em todas as telas.",
   },
   {
-    title: "DECORAÇÃO COM ATMOSFERA",
-    subtitle: "Casa brasileira contemporânea",
-    description:
-      "Objetos e composições que unem elegância, autenticidade e presença visual premium.",
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/casa-e-decoracao",
+    title: "Seleção brasileira",
+    text: "Produtos com identidade visual sofisticada e apelo internacional.",
   },
   {
-    title: "ENXOVAL REFINADO",
-    subtitle: "Conforto com sofisticação",
-    description:
-      "Itens pensados para elevar a experiência da casa com estética limpa e desejável.",
-    image:
-      "https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/casa-e-decoracao",
-  },
-  {
-    title: "FORMAS E TEXTURAS",
-    subtitle: "Curadoria de interior",
-    description:
-      "Cerâmica, travessas, xícaras e objetos para um catálogo premium e internacional.",
-    image:
-      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/casa-e-decoracao",
-  },
-  {
-    title: "MESA E PRESENÇA",
-    subtitle: "Objetos com valor visual",
-    description:
-      "Peças que ajudam a construir ambientes sofisticados e memoráveis.",
-    image:
-      "https://images.unsplash.com/photo-1464890100898-a385f744067f?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/casa-e-decoracao",
-  },
-  {
-    title: "CASA E ELEGÂNCIA",
-    subtitle: "Decoração com linguagem premium",
-    description:
-      "Uma leitura contemporânea e comercial para o segmento casa, decoração e enxoval.",
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
-    href: "/produtos/casa-e-decoracao",
+    title: "Jornada fluida",
+    text: "Pesquisa, bag e login pensados para conversão com aparência premium.",
   },
 ];
-
-type SliderProps = {
-  title: string;
-  slides: Slide[];
-};
-
-function DualSlider({ title, slides }: SliderProps) {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 4500);
-
-    return () => clearInterval(timer);
-  }, [slides.length]);
-
-  const goPrev = () => {
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const goNext = () => {
-    setCurrent((prev) => (prev + 1) % slides.length);
-  };
-
-  const activeSlide = slides[current];
-
-  return (
-    <section className="flex h-full flex-col">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <p className="text-[11px] uppercase tracking-[0.35em] text-[#cdb899]">
-          {title}
-        </p>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={goPrev}
-            aria-label="Slide anterior"
-            className="rounded-full border border-white/15 p-2 text-white/80 transition hover:border-white/40 hover:bg-white/5 hover:text-white"
-          >
-            <ChevronLeft size={16} />
-          </button>
-
-          <button
-            type="button"
-            onClick={goNext}
-            aria-label="Próximo slide"
-            className="rounded-full border border-white/15 p-2 text-white/80 transition hover:border-white/40 hover:bg-white/5 hover:text-white"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
-      </div>
-
-      <div className="relative block overflow-hidden rounded-[28px] border border-white/10 bg-[#0d0d0d]">
-        <div className="relative min-h-[520px]">
-          {slides.map((slide, index) => (
-            <div
-              key={`${slide.title}-${index}`}
-              className={`absolute inset-0 transition-all duration-700 ease-out ${
-                current === index
-                  ? "translate-x-0 opacity-100"
-                  : index < current
-                    ? "-translate-x-8 opacity-0"
-                    : "translate-x-8 opacity-0"
-              }`}
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url('${slide.image}')` }}
-              />
-              <div className="absolute inset-0 bg-black/45" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/35" />
-            </div>
-          ))}
-
-          <div className="relative z-10 flex min-h-[520px] items-end">
-            <div className="w-full p-6 sm:p-8 lg:p-10">
-              <p className="mb-3 text-[11px] uppercase tracking-[0.32em] text-[#d6c2a1]">
-                {activeSlide.subtitle}
-              </p>
-
-              <h2
-                className="max-w-[90%] text-3xl font-light leading-[0.95] text-white sm:text-4xl lg:text-5xl"
-                style={{ fontFamily: "serif" }}
-              >
-                {activeSlide.title}
-              </h2>
-
-              <Link
-                href={activeSlide.href}
-                className="mt-4 block max-w-xl text-sm leading-7 text-white/80 transition hover:text-white sm:text-base"
-              >
-                {activeSlide.description}
-              </Link>
-
-              <Link
-                href={activeSlide.href}
-                className="mt-6 inline-flex items-center gap-3 rounded-full border border-white/20 px-5 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition hover:bg-white hover:text-black"
-              >
-                Explorar
-                <span className="text-base">→</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const currentSlide = useMemo(() => heroSlides[activeSlide], [activeSlide]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  function goToPreviousSlide() {
+    setActiveSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
+  }
+
+  function goToNextSlide() {
+    setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+  }
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <section className="relative overflow-hidden border-b border-white/8">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_45%)]" />
-
-        <div className="relative mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 sm:pb-10 sm:pt-14 lg:px-10 lg:pb-12 lg:pt-16">
-          <div className="text-center">
-            <p className="mb-4 text-[10px] uppercase tracking-[0.5em] text-[#cdb899] sm:text-[11px]">
-              Brasil sofisticado para o mundo
-            </p>
-
-            <h1
-              className="mx-auto max-w-6xl text-4xl font-light leading-[0.88] text-white sm:text-6xl lg:text-[108px]"
-              style={{ fontFamily: "serif" }}
-            >
-              D&apos;OUTRO LADO
-            </h1>
-          </div>
-
-          <header className="mt-8 rounded-full border border-white/10 bg-white/[0.03] px-3 py-3 backdrop-blur-md sm:px-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setMenuOpen(true)}
-                  aria-label="Abrir menu"
-                  className="rounded-full border border-white/10 p-3 transition hover:border-white/30 hover:bg-white/5"
-                >
-                  <Menu size={20} />
-                </button>
-
-                <Link
-                  href="/"
-                  className="hidden rounded-full border border-white/10 px-4 py-3 text-[11px] uppercase tracking-[0.3em] text-white/75 transition hover:border-white/30 hover:bg-white/5 md:inline-flex"
-                >
-                  Home
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-2 sm:gap-3">
-                <button className="rounded-full border border-white/10 px-4 py-3 text-[11px] uppercase tracking-[0.22em] text-white/80 transition hover:border-white/30 hover:bg-white/5">
-                  EN
-                </button>
-
-                <button className="hidden rounded-full border border-white/10 px-5 py-3 text-[11px] uppercase tracking-[0.22em] text-white/80 transition hover:border-white/30 hover:bg-white/5 sm:inline-flex">
-                  Europe
-                </button>
-
-                <button className="rounded-full border border-white/10 px-4 py-3 text-[11px] uppercase tracking-[0.22em] text-white/80 transition hover:border-white/30 hover:bg-white/5">
-                  EUR
-                </button>
-
-                <button
-                  aria-label="Pesquisar"
-                  className="rounded-full border border-transparent p-3 transition hover:border-white/20 hover:bg-white/5"
-                >
-                  <Search size={18} />
-                </button>
-
-                <Link
-                  href="/login"
-                  aria-label="Login"
-                  className="rounded-full border border-transparent p-3 transition hover:border-white/20 hover:bg-white/5"
-                >
-                  <User size={18} />
-                </Link>
-
-                <Link
-                  href="/bag"
-                  aria-label="Sacola"
-                  className="rounded-full border border-transparent p-3 transition hover:border-white/20 hover:bg-white/5"
-                >
-                  <ShoppingBag size={18} />
-                </Link>
-              </div>
-            </div>
-          </header>
-        </div>
-      </section>
-
-      <section className="px-4 pb-12 pt-10 sm:px-6 lg:px-10">
-        <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
-          <DualSlider
-            title="Moda, vestuário e acessórios"
-            slides={fashionSlides}
-          />
-          <DualSlider
-            title="Cerâmica, decorações e enxoval"
-            slides={homeSlides}
-          />
-        </div>
-      </section>
-
-      <section className="px-4 pb-16 sm:px-6 lg:px-10">
-        <div className="overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.03]">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
+    <main className="container-premium section-spacing">
+      <section className="home-hero card-premium">
+        <div className="home-hero__media">
+          {heroSlides.map((slide, index) => (
             <div
-              className="min-h-[360px] bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1400&q=80')",
-              }}
+              key={slide.id}
+              className={`home-hero__image-layer ${
+                index === activeSlide ? "is-active" : ""
+              }`}
+              style={{ backgroundImage: `url(${slide.image})` }}
+              aria-hidden={index !== activeSlide}
             />
-            <div className="flex items-center">
-              <div className="p-8 sm:p-10 lg:p-14">
-                <p className="mb-3 text-[11px] uppercase tracking-[0.35em] text-[#cdb899]">
-                  Presentes personalizados
-                </p>
+          ))}
 
-                <h2
-                  className="text-3xl font-light leading-tight text-white sm:text-4xl lg:text-5xl"
-                  style={{ fontFamily: "serif" }}
-                >
-                  Kits elegantes criados para ocasiões especiais
-                </h2>
+          <div className="home-hero__overlay" />
 
-                <p className="mt-5 max-w-xl text-sm leading-7 text-white/75 sm:text-base">
-                  Desenvolvemos composições exclusivas para presentes sofisticados,
-                  unindo estética refinada, curadoria brasileira e apresentação
-                  premium para surpreender com personalidade.
-                </p>
+          <div className="home-hero__controls">
+            <button
+              type="button"
+              className="home-hero__control-button"
+              onClick={goToPreviousSlide}
+              aria-label="Slide anterior"
+            >
+              <ChevronLeft size={18} />
+            </button>
 
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link
-                    href="/contato"
-                    className="rounded-full border border-white/20 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition hover:bg-white hover:text-black"
-                  >
-                    Solicitar presente personalizado
-                  </Link>
+            <button
+              type="button"
+              className="home-hero__control-button"
+              onClick={goToNextSlide}
+              aria-label="Próximo slide"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
 
-                  <Link
-                    href="/sobre"
-                    className="rounded-full border border-white/10 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white/80 transition hover:border-white/30 hover:bg-white/5 hover:text-white"
-                  >
-                    Saber mais
-                  </Link>
-                </div>
-              </div>
+          <div className="home-hero__content">
+            <p className="home-hero__eyebrow">{currentSlide.eyebrow}</p>
+
+            <h1 className="home-hero__title">D&apos;OUTRO LADO</h1>
+
+            <h2 className="home-hero__headline">{currentSlide.title}</h2>
+
+            <p className="home-hero__subtitle">{currentSlide.subtitle}</p>
+
+            <p className="home-hero__description">{currentSlide.description}</p>
+
+            <div className="home-hero__actions">
+              <Link href={currentSlide.href} className="home-hero__primary-button">
+                EXPLORAR
+              </Link>
+
+              <Link href="/search" className="home-hero__secondary-button">
+                BUSCAR PRODUTOS
+              </Link>
+            </div>
+
+            <div className="home-hero__dots" aria-label="Indicadores do slider">
+              {heroSlides.map((slide, index) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  className={`home-hero__dot ${index === activeSlide ? "is-active" : ""}`}
+                  onClick={() => setActiveSlide(index)}
+                  aria-label={`Ir para slide ${index + 1}`}
+                />
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      <MenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <section className="home-section">
+        <div className="home-section__intro">
+          <p className="home-section__eyebrow">Categorias principais</p>
+          <h2 className="home-section__title">Seleções com leitura premium</h2>
+          <p className="home-section__text">
+            Os sliders e blocos abaixo devem induzir o clique com elegância,
+            levando o cliente diretamente para as categorias centrais do projeto.
+          </p>
+        </div>
+
+        <div className="home-categories">
+          {categoryCards.map((card) => (
+            <Link key={card.id} href={card.href} className="home-category-card">
+              <div
+                className="home-category-card__image"
+                style={{ backgroundImage: `url(${card.image})` }}
+              />
+              <div className="home-category-card__overlay" />
+              <div className="home-category-card__content">
+                <p className="home-category-card__eyebrow">Explorar categoria</p>
+                <h3 className="home-category-card__title">{card.title}</h3>
+                <p className="home-category-card__description">{card.description}</p>
+                <span className="home-category-card__cta">VER COLEÇÃO</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="home-section">
+        <div className="home-brand-block card-premium">
+          <div className="home-brand-block__left">
+            <p className="home-section__eyebrow">Curadoria brasileira premium</p>
+            <h2 className="home-brand-block__title">D&apos;OUTRO LADO</h2>
+            <p className="home-brand-block__text">
+              Produtos brasileiros sofisticados, apresentados com uma experiência
+              elegante, internacional e responsiva. O objetivo é unir estética,
+              desejo e clareza de navegação em uma vitrine refinada.
+            </p>
+          </div>
+
+          <div className="home-brand-block__right">
+            {featuredHighlights.map((item) => (
+              <article key={item.title} className="home-highlight-card">
+                <h3 className="home-highlight-card__title">{item.title}</h3>
+                <p className="home-highlight-card__text">{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <style jsx>{`
+        .home-hero {
+          overflow: hidden;
+          padding: 0;
+        }
+
+        .home-hero__media {
+          position: relative;
+          min-height: calc(100vh - 140px);
+          border-radius: 28px;
+          overflow: hidden;
+        }
+
+        .home-hero__image-layer {
+          position: absolute;
+          inset: 0;
+          background-size: cover;
+          background-position: center;
+          transform: scale(1.03);
+          opacity: 0;
+          transition:
+            opacity 0.9s ease,
+            transform 5.8s ease;
+        }
+
+        .home-hero__image-layer.is-active {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        .home-hero__overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            180deg,
+            rgba(8, 8, 8, 0.12) 0%,
+            rgba(8, 8, 8, 0.22) 30%,
+            rgba(8, 8, 8, 0.42) 100%
+          );
+        }
+
+        .home-hero__controls {
+          position: absolute;
+          top: 24px;
+          right: 24px;
+          z-index: 3;
+          display: flex;
+          gap: 10px;
+        }
+
+        .home-hero__control-button {
+          width: 44px;
+          height: 44px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.28);
+          background: rgba(255, 255, 255, 0.12);
+          backdrop-filter: blur(10px);
+          color: white;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition:
+            transform 0.2s ease,
+            background 0.2s ease,
+            border-color 0.2s ease;
+        }
+
+        .home-hero__control-button:hover {
+          transform: translateY(-1px);
+          background: rgba(255, 255, 255, 0.18);
+          border-color: rgba(255, 255, 255, 0.42);
+        }
+
+        .home-hero__content {
+          position: relative;
+          z-index: 2;
+          min-height: calc(100vh - 140px);
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          padding: 56px;
+          color: white;
+        }
+
+        .home-hero__eyebrow {
+          margin: 0;
+          font-size: 12px;
+          letter-spacing: 0.34em;
+          text-transform: uppercase;
+          opacity: 0.92;
+        }
+
+        .home-hero__title {
+          margin: 18px 0 0;
+          font-family:
+            "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
+            Georgia, serif;
+          font-size: clamp(2.8rem, 7vw, 5.5rem);
+          font-weight: 400;
+          letter-spacing: 0.16em;
+          line-height: 0.95;
+        }
+
+        .home-hero__headline {
+          margin: 22px 0 0;
+          max-width: 780px;
+          font-size: clamp(1.5rem, 3vw, 2.4rem);
+          font-weight: 400;
+          line-height: 1.18;
+        }
+
+        .home-hero__subtitle {
+          margin: 16px 0 0;
+          max-width: 680px;
+          font-size: 1rem;
+          line-height: 1.85;
+          color: rgba(255, 255, 255, 0.9);
+        }
+
+        .home-hero__description {
+          margin: 14px 0 0;
+          max-width: 720px;
+          font-size: 0.95rem;
+          line-height: 1.85;
+          color: rgba(255, 255, 255, 0.78);
+        }
+
+        .home-hero__actions {
+          margin-top: 30px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 14px;
+        }
+
+        .home-hero__primary-button,
+        .home-hero__secondary-button {
+          min-width: 196px;
+          padding: 14px 22px;
+          border-radius: 999px;
+          font-size: 12px;
+          letter-spacing: 0.24em;
+          text-transform: uppercase;
+          text-align: center;
+          transition:
+            transform 0.22s ease,
+            opacity 0.22s ease,
+            background 0.22s ease,
+            border-color 0.22s ease;
+        }
+
+        .home-hero__primary-button {
+          background: rgba(255, 255, 255, 0.95);
+          color: #101010;
+          border: 1px solid rgba(255, 255, 255, 0.95);
+        }
+
+        .home-hero__secondary-button {
+          background: rgba(255, 255, 255, 0.08);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.28);
+          backdrop-filter: blur(10px);
+        }
+
+        .home-hero__primary-button:hover,
+        .home-hero__secondary-button:hover {
+          transform: translateY(-1px);
+          opacity: 0.95;
+        }
+
+        .home-hero__dots {
+          display: flex;
+          gap: 10px;
+          margin-top: 30px;
+        }
+
+        .home-hero__dot {
+          width: 42px;
+          height: 4px;
+          border: 0;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.28);
+          cursor: pointer;
+          transition:
+            background 0.22s ease,
+            transform 0.22s ease;
+        }
+
+        .home-hero__dot.is-active {
+          background: rgba(255, 255, 255, 0.92);
+        }
+
+        .home-section {
+          padding-top: 34px;
+        }
+
+        .home-section__intro {
+          max-width: 760px;
+          margin-bottom: 24px;
+        }
+
+        .home-section__eyebrow {
+          margin: 0;
+          font-size: 12px;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: #6b6b6b;
+        }
+
+        .home-section__title {
+          margin: 14px 0 0;
+          font-family:
+            "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
+            Georgia, serif;
+          font-size: clamp(2rem, 4vw, 3.2rem);
+          font-weight: 400;
+          letter-spacing: 0.08em;
+          color: #181818;
+        }
+
+        .home-section__text {
+          margin: 16px 0 0;
+          font-size: 15px;
+          line-height: 1.9;
+          color: #5f5f5f;
+        }
+
+        .home-categories {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 20px;
+        }
+
+        .home-category-card {
+          position: relative;
+          min-height: 520px;
+          overflow: hidden;
+          border-radius: 30px;
+          border: 1px solid rgba(23, 23, 23, 0.08);
+          background: rgba(255, 255, 255, 0.7);
+          box-shadow: 0 16px 50px rgba(0, 0, 0, 0.04);
+          transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
+        }
+
+        .home-category-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.07);
+        }
+
+        .home-category-card__image {
+          position: absolute;
+          inset: 0;
+          background-size: cover;
+          background-position: center;
+          transform: scale(1.02);
+          transition: transform 0.8s ease;
+        }
+
+        .home-category-card:hover .home-category-card__image {
+          transform: scale(1.07);
+        }
+
+        .home-category-card__overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            180deg,
+            rgba(15, 15, 15, 0.06) 0%,
+            rgba(15, 15, 15, 0.2) 35%,
+            rgba(15, 15, 15, 0.58) 100%
+          );
+        }
+
+        .home-category-card__content {
+          position: relative;
+          z-index: 2;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          padding: 30px;
+          color: white;
+        }
+
+        .home-category-card__eyebrow {
+          margin: 0;
+          font-size: 11px;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          opacity: 0.9;
+        }
+
+        .home-category-card__title {
+          margin: 14px 0 0;
+          font-size: 1.7rem;
+          font-weight: 500;
+          line-height: 1.2;
+        }
+
+        .home-category-card__description {
+          margin: 12px 0 0;
+          font-size: 14px;
+          line-height: 1.8;
+          color: rgba(255, 255, 255, 0.88);
+          max-width: 520px;
+        }
+
+        .home-category-card__cta {
+          display: inline-flex;
+          margin-top: 22px;
+          width: fit-content;
+          padding-bottom: 4px;
+          font-size: 12px;
+          letter-spacing: 0.24em;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.65);
+        }
+
+        .home-brand-block {
+          display: grid;
+          grid-template-columns: 1.05fr 0.95fr;
+          gap: 24px;
+          padding: 34px;
+        }
+
+        .home-brand-block__title {
+          margin: 16px 0 0;
+          font-family:
+            "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
+            Georgia, serif;
+          font-size: clamp(2.2rem, 4vw, 4rem);
+          font-weight: 400;
+          letter-spacing: 0.12em;
+          color: #171717;
+        }
+
+        .home-brand-block__text {
+          margin: 20px 0 0;
+          max-width: 620px;
+          font-size: 15px;
+          line-height: 1.95;
+          color: #5f5f5f;
+        }
+
+        .home-brand-block__right {
+          display: grid;
+          gap: 14px;
+        }
+
+        .home-highlight-card {
+          border: 1px solid rgba(23, 23, 23, 0.08);
+          border-radius: 24px;
+          background: rgba(255, 255, 255, 0.72);
+          padding: 20px;
+        }
+
+        .home-highlight-card__title {
+          margin: 0;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #171717;
+        }
+
+        .home-highlight-card__text {
+          margin: 10px 0 0;
+          font-size: 14px;
+          line-height: 1.8;
+          color: #616161;
+        }
+
+        @media (max-width: 1024px) {
+          .home-brand-block {
+            grid-template-columns: 1fr;
+          }
+
+          .home-categories {
+            grid-template-columns: 1fr;
+          }
+
+          .home-category-card {
+            min-height: 460px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .home-hero__media,
+          .home-hero__content {
+            min-height: calc(100vh - 120px);
+          }
+
+          .home-hero__content {
+            padding: 24px;
+          }
+
+          .home-hero__controls {
+            top: 16px;
+            right: 16px;
+          }
+
+          .home-hero__headline {
+            font-size: 1.55rem;
+          }
+
+          .home-hero__subtitle,
+          .home-hero__description {
+            font-size: 14px;
+            line-height: 1.8;
+          }
+
+          .home-hero__actions {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .home-hero__primary-button,
+          .home-hero__secondary-button {
+            width: 100%;
+            min-width: 0;
+          }
+
+          .home-category-card {
+            min-height: 400px;
+          }
+
+          .home-category-card__content {
+            padding: 22px;
+          }
+
+          .home-brand-block {
+            padding: 24px;
+          }
+        }
+      `}</style>
     </main>
   );
 }

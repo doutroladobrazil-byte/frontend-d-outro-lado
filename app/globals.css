@@ -834,3 +834,262 @@ img {
     width: 22px;
   }
 }
+@import "tailwindcss";
+
+:root {
+  --background: #f8f6f2;
+  --foreground: #171717;
+  --muted: #6b6b6b;
+  --line: rgba(23, 23, 23, 0.08);
+  --line-strong: rgba(23, 23, 23, 0.14);
+  --card: rgba(255, 255, 255, 0.88);
+  --brand-font: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.92), rgba(248, 246, 242, 1) 42%, rgba(239, 235, 228, 1) 100%);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding-top: 76px;
+}
+
+/* HEADER */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 76px;
+  z-index: 60;
+  backdrop-filter: blur(18px);
+  background: rgba(248, 246, 242, 0.82);
+  border-bottom: 1px solid var(--line);
+}
+
+.site-header__inner {
+  width: min(1280px, calc(100% - 24px));
+  height: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.site-header__left,
+.site-header__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-header__right {
+  justify-content: flex-end;
+}
+
+.site-header__center {
+  display: flex;
+  justify-content: center;
+}
+
+.site-header__brand {
+  font-family: var(--brand-font);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.site-header__icon-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.site-header__icon-button:hover {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: var(--line);
+  transform: translateY(-1px);
+}
+
+/* DRAWER */
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+}
+
+.drawer-overlay.is-open {
+  pointer-events: auto;
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.drawer-overlay.is-open .drawer-backdrop {
+  opacity: 1;
+}
+
+.drawer-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(420px, 92vw);
+  height: 100%;
+  background: rgba(250, 248, 244, 0.98);
+  backdrop-filter: blur(18px);
+  border-right: 1px solid var(--line);
+  transform: translateX(-100%);
+  transition: transform 0.32s ease;
+  padding: 22px 22px 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-panel.is-open {
+  transform: translateX(0);
+}
+
+.drawer-panel__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.drawer-panel__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.drawer-panel__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drawer-panel__link {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+  color: #1f1f1f;
+  transition: opacity 0.22s ease;
+}
+
+.drawer-panel__link:hover {
+  opacity: 0.65;
+}
+
+.drawer-panel__footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 24px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* HELPERS */
+
+.container-premium {
+  width: min(1280px, calc(100% - 24px));
+  margin: 0 auto;
+}
+
+.section-spacing {
+  padding: 28px 0 48px;
+}
+
+.card-premium {
+  border: 1px solid var(--line);
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  border-radius: 28px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.04);
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 768px) {
+  .page-shell {
+    padding-top: 72px;
+  }
+
+  .site-header {
+    height: 72px;
+  }
+
+  .site-header__inner {
+    width: min(100% - 20px, 1280px);
+  }
+
+  .site-header__brand {
+    font-size: 15px;
+    letter-spacing: 0.24em;
+  }
+
+  .site-header__icon-button {
+    width: 40px;
+    height: 40px;
+  }
+}
