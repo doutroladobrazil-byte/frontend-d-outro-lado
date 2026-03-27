@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import SiteHeader from "../components/layout/SiteHeader";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "D'OUTRO LADO",
-  description: "Curadoria premium de produtos brasileiros sofisticados.",
+  description: "E-commerce premium internacional D'OUTRO LADO",
 };
 
 export default function RootLayout({
@@ -15,8 +15,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <SiteHeader />
-        <main className="page-shell">{children}</main>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
