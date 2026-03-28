@@ -20,9 +20,8 @@ export default function RootLayout({
         <CartProvider>
           <div className="page-shell">
             <div className="topbar">
-              <div className="topbar-inner">
+              <div className="topbar-inner" style={{ justifyContent: "center" }}>
                 <span>Brasil sofisticado para o mundo</span>
-                <span>Curadoria premium • Exportação internacional</span>
               </div>
             </div>
 
@@ -47,31 +46,19 @@ export default function RootLayout({
                       <path d="M4 17h16" />
                     </svg>
                   </button>
-
-                  <div className="nav-meta only-desktop">
-                    <button type="button" className="chip-button">
-                      EN
-                    </button>
-                    <button type="button" className="chip-button">
-                      Europe
-                    </button>
-                    <button type="button" className="chip-button">
-                      EUR
-                    </button>
-                  </div>
                 </div>
 
                 <div className="site-header__center">
                   <Link href="/" aria-label="Ir para a página inicial">
                     <div className="brand-mark">D&apos;OUTRO LADO</div>
-                    <div className="brand-subtitle">
-                      Brasil sofisticado para o mundo
-                    </div>
                   </Link>
                 </div>
 
                 <div className="site-header__right">
-                  <nav className="nav-links only-desktop" aria-label="Navegação principal">
+                  <nav
+                    className="nav-links only-desktop"
+                    aria-label="Navegação principal"
+                  >
                     <Link href="/" className="nav-link">
                       Home
                     </Link>
@@ -96,6 +83,14 @@ export default function RootLayout({
                   </nav>
 
                   <div className="nav-actions">
+                    <button
+                      type="button"
+                      className="chip-button only-desktop"
+                      aria-label="Idioma"
+                    >
+                      EN
+                    </button>
+
                     <button
                       type="button"
                       className="nav-search-button"
@@ -158,8 +153,9 @@ export default function RootLayout({
                   <div className="footer-brand">
                     <div className="footer-title">D&apos;OUTRO LADO</div>
                     <p className="footer-text">
-                      Curadoria premium de peças brasileiras com estética refinada,
-                      presença internacional e experiência de compra sofisticada.
+                      Curadoria premium de peças brasileiras com estética
+                      refinada, presença internacional e experiência de compra
+                      sofisticada.
                     </p>
                   </div>
 
